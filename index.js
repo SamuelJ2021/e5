@@ -37,6 +37,25 @@ app.get('/utilisateurs', (req, res) => {
   });
 });
 
+
+// Endpoint pour récupérer toutes les nations
+app.get('/utilisateurs/:_username', (req, res) => {
+    const username = '%'+req.params._username+'%';
+    // Crée la requête SQL avec un paramètre pour le nom
+    const sql = 'SELECT * FROM utilisateurs WHERE username LIKE ?';
+    db.query(sql, [username], (err, results) => {
+    if (err) {
+        return res.status(500).send(err);
+    }
+    if (results.length === 0) {
+    // Si aucune nation n'est trouvée, renvoyer une erreur 404
+        return res.status(404).json({ message: 'User not found' });
+    }
+    // Si des résultats sont trouvés, renvoyer les données
+    res.json(results);
+    });
+});
+
 // Endpoint pour ajouter une nouvelle nation
 app.post('/utilisateurs', (req, res) => {
   const { username, mdp } = req.body;

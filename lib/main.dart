@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -53,26 +55,47 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController usernameController = TextEditingController(); // Il va stocker username
   TextEditingController passwordController = TextEditingController(); // Il va stocker password
 
-  Text _username = const Text('');
-  Text _password = const Text('');
+  String _username = '';
+  String _password = '';
+
+  // List<Utilisateur> _utilisateurs = [];
 
   // String usernameEnregistree = '';
   // String passwordEnregistree = '';
 
-  void _getinfo(){
-  _username = Text(usernameController.text);
-  _password = Text(passwordController.text);
+  Utilisateur _getinfo(){
+  _username = usernameController.text;
+  _password = passwordController.text;
   print(_username);
   print(_password);
   // print([usernameController.text, passwordController.text]);
+  return Utilisateur(username: _username, password: _password);
   }
-  void _connexion_base(){
-    //
+
+
+  Future<void> _searchUser() async{
+    final temp = _getinfo();
+
+
+    final url = Uri.parse('http://10.51.4.100/utilisateurs/${temp.username}');//10.0.2.2
+    final response = await http.get(url);
+    print(response.statusCode);
+    if (response.statusCode == 200){
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        final _utilisateurs = data.map((utilisateurs) => Utilisateur.fromJson(utilisateurs)).toList();
+      });
+    }else{
+      print('Erreur : ${response.statusCode}');
+    }
   }
+
+  // void _sU(String query){
+  //   await _searchUser(query);
+  // }
   // Future<void> recuperer() async{
   //   String ID = idController.text;
   // }
-
 
   void _message(){
     if (_counter > 0){
@@ -92,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter-=1;
     });
   }
-  void _incrementCounterLimited(){//int maximum){
+  void _incrementCounterLimited(){
     int maximum = 100;
     if (_counter < maximum){
       _incrementCounter();
@@ -157,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             //Text('Validate'),
             FloatingActionButton(
-              onPressed: _getinfo,
+              onPressed: () async {await _searchUser();},
               tooltip: 'Validate',
               backgroundColor: Colors.green,
               child: const Icon(Icons.check),
@@ -189,6 +212,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, 
       backgroundColor: _couleur,// This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class Utilisateur {
+  String? username;
+  String? password;
+
+  Utilisateur({required this.username, required this.password});
+
+  factory Utilisateur.fromJson(Map<String, dynamic> json) {
+    return Utilisateur(
+      username: json['username'],
+      password: json['password'],
     );
   }
 }
