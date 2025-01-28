@@ -75,31 +75,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _searchUser() async{
     final temp = _getinfo();
-    // print('_searchUser(), $temp');
 
-    final url = Uri.parse('http://10.0.2.2:3000/utilisateurs/${temp.username}');//10.0.2.2//10.51.4.100//10.52.4.1
-    print(url);
+
+    final url = Uri.parse('http://10.52.4.1/utilisateurs/${temp.username}');//10.0.2.2//10.51.4.100
     final response = await http.get(url);
-    // print(response.statusCode);
+    print(response.statusCode);
     if (response.statusCode == 200){
-      print('Aucune erreur : ${response.statusCode}');
       final List<dynamic> data = json.decode(response.body);
-      final mdp = data[0]['mdp'];
-      if (_password == mdp){
-        print('Connecté');
-        final idrole = data[0]['idRole'];
-        if (idrole == 1){
-          print('Administrateur');
-          // changer d'écran
-          Navigator.push(context, MaterialPageRoute(builder: (context){
-            return PageAccueil();
-          }));
-        }else{
-          print('Pas administrateur');
-        }
-      }else{
-        print('Connexion échouée');
-      }
+      setState(() {
+        final _utilisateurs = data.map((utilisateurs) => Utilisateur.fromJson(utilisateurs)).toList();
+      });
     }else{
       print('Erreur : ${response.statusCode}');
     }
@@ -244,31 +229,3 @@ class Utilisateur {
     );
   }
 }
-
-class PageAccueil extends StatelessWidget {
-  const PageAccueil({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Samuel',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        //
-        colorScheme: ColorScheme.fromSeed(seedColor:const Color.fromARGB(255, 0, 0, 255)),//Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'E5 Samuel Home Page'),
-    );
-  }
-}
-
-// class PageAccueil extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//   final String title;
-
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
