@@ -245,14 +245,14 @@ class Utilisateur {
   }
 }
 
-class PageAccueil extends StatelessWidget {
-  const PageAccueil({super.key});
+class AppAccueil extends StatelessWidget {
+  const AppAccueil({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Samuel',
+      title: "Connecté en tant qu'administrateur",
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -260,15 +260,15 @@ class PageAccueil extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor:const Color.fromARGB(255, 0, 0, 255)),//Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'E5 Samuel Home Page'),
+      home: const PageAccueil(title: 'E5 Samuel Home Page'),
     );
   }
 }
 
-// class PageAccueil extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//   final String title;
+class PageAccueil extends StatefulWidget {
+  const PageAccueil({super.key, required this.title});
+  final String title;
 
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
