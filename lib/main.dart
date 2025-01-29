@@ -282,8 +282,9 @@ class _PageAccueilState extends State<PageAccueil> {
       if (response.statusCode == 200){
         print('Aucune erreur : ${response.statusCode}');
         print(response);
-        // final List<dynamic> data = json.decode(response.body);
-        // final mdp = data[0]['mdp'];
+        final List<dynamic> data = json.decode(response.body);
+        final ans = data[0]['mdp'];
+        print(ans[0]);  // Il faudrait afficher pareil quavatar
       }else{
         print('Erreur : ${response.statusCode}');
       }
