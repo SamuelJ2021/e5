@@ -296,7 +296,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Connecté en tant qu'administrateur"),
+            const Text("Connecté en tant qu'administrateur"),
             TextFormField(  // Un champ de texte
               controller: _productname,
               decoration: const InputDecoration(
