@@ -283,8 +283,11 @@ class _PageAccueilState extends State<PageAccueil> {
         print('Aucune erreur : ${response.statusCode}');
         print(response);
         final List<dynamic> data = json.decode(response.body);
-        final ans = data[0]['mdp'];
-        print(ans[0]);  // Il faudrait afficher pareil quavatar
+        final ans = data[0];
+        // print(ans);  // Il faudrait afficher pareil quavatar
+        setState(() {
+          ans = movies.map((movie) => Movie.fromJson(movie)).toList();
+        });
       }else{
         print('Erreur : ${response.statusCode}');
       }
