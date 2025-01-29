@@ -248,15 +248,12 @@ class Utilisateur {
 class AppAccueil extends StatelessWidget {
   const AppAccueil({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Connecté en tant qu'administrateur",
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        //
+
         colorScheme: ColorScheme.fromSeed(seedColor:const Color.fromARGB(255, 0, 0, 255)),//Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -270,5 +267,5 @@ class PageAccueil extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PageAccueil> createState() => PageAccueil();
 }
