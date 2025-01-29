@@ -49,7 +49,7 @@ app.get('/utilisateurs/:_username', (req, res) => {
     }
     if (results.length === 0) {
     // Si aucune nation n'est trouvée, renvoyer une erreur 404
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: 'No user found' });
     }
     // Si des résultats sont trouvés, renvoyer les données
     res.json(results);
@@ -69,6 +69,16 @@ app.post('/utilisateurs', (req, res) => {
 });
 
 
+app.get('/produits', (req, res) => {
+  const sql = 'SELECT * FROM produits';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.json(results);
+  });
+});
+
 app.get('/produits/:_nom', (req, res) => {
   const nom = '%'+req.params._nom+'%';
   const sql = 'SELECT * FROM produits WHERE nom LIKE ?';
@@ -77,7 +87,7 @@ app.get('/produits/:_nom', (req, res) => {
       return res.status(500).send(err);
   }
   if (results.length === 0) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: 'No product found' });
   }
   res.json(results);
   });

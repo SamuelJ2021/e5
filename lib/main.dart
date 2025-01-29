@@ -273,17 +273,25 @@ class PageAccueil extends StatefulWidget {
 
 class _PageAccueilState extends State<PageAccueil> {
   TextEditingController _productname = TextEditingController();
-  // final _couleur1 = const Color.fromARGB(255, 190, 235, 255);
-  // final _couleur2 = const Color.fromARGB(255, 207, 213, 33);
-  // var _couleur = const Color.fromARGB(255, 190, 235, 255);
-
   
+    Future<void> _searchProduct() async{
+      final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
+      print(url);
+      final response = await http.get(url);
+      // print(response.statusCode);
+      if (response.statusCode == 200){
+        print('Aucune erreur : ${response.statusCode}');
+        print(response);
+        // final List<dynamic> data = json.decode(response.body);
+        // final mdp = data[0]['mdp'];
+      }else{
+        print('Erreur : ${response.statusCode}');
+      }
+    }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    //
+    
     return Scaffold(
       appBar: AppBar(
         //
@@ -305,7 +313,7 @@ class _PageAccueilState extends State<PageAccueil> {
               ),
             ),
             FloatingActionButton(
-              onPressed: (){},// async {await _searchUser();},
+              onPressed: () async {await _searchProduct();},// async {await _searchUser();},
               tooltip: 'Validate',
               backgroundColor: Colors.green,
               child: const Icon(Icons.check),
