@@ -303,8 +303,14 @@ class _PageAccueilState extends State<PageAccueil> {
                 border: UnderlineInputBorder(),
                 labelText: 'Search the product',
               ),
+            ),
+            FloatingActionButton(
+              onPressed: (){},// async {await _searchUser();},
+              tooltip: 'Validate',
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.check),
+            ),
               //textAlign: Center,
-            )
             
           ],
         ),

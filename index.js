@@ -68,6 +68,21 @@ app.post('/utilisateurs', (req, res) => {
   });
 });
 
+
+app.get('/produits/:_nom', (req, res) => {
+  const nom = '%'+req.params._nom+'%';
+  const sql = 'SELECT * FROM produits WHERE nom LIKE ?';
+  db.query(sql, [nom], (err, results) => {
+  if (err) {
+      return res.status(500).send(err);
+  }
+  if (results.length === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+  }
+  res.json(results);
+  });
+});
+
 // Démarrage du serveur
 app.listen(port, () => {
   console.log(`Serveur API en écoute sur http://localhost:${port}`);
