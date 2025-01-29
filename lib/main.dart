@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -245,22 +247,21 @@ class Utilisateur {
   }
 }
 
-/*class AppAccueil extends StatelessWidget {
-  const AppAccueil({super.key});
+class Produit {
+  String? nom;
+  Int? prix;
+  Int? stock;
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Connecté en tant qu'administrateur",
-      theme: ThemeData(
+  Produit({required this.nom, required this.prix, required this.stock});
 
-        colorScheme: ColorScheme.fromSeed(seedColor:const Color.fromARGB(255, 0, 0, 255)),//Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const PageAccueil(title: 'E5 Samuel Home Page'),
+  factory Produit.fromJson(Map<String, dynamic> json) {
+    return Produit(
+      nom: json['nom'],
+      prix: json['prix'],
+      stock: json['stock']
     );
   }
-}*/
+}
 
 class PageAccueil extends StatefulWidget {
   const PageAccueil({super.key, required this.title});
@@ -283,11 +284,14 @@ class _PageAccueilState extends State<PageAccueil> {
         print('Aucune erreur : ${response.statusCode}');
         print(response);
         final List<dynamic> data = json.decode(response.body);
-        final ans = data[0];
+        // final ans = data[0];
         // print(ans);  // Il faudrait afficher pareil quavatar
-        setState(() {
-          ans = movies.map((movie) => Movie.fromJson(movie)).toList();
-        });
+        // setState(() {
+        //   final _products = data//data.map((movie) => Movie.fromJson(movie)).toList();
+        // });
+        for (var element in data) {
+          print(element.nom);
+        }
       }else{
         print('Erreur : ${response.statusCode}');
       }
@@ -330,3 +334,54 @@ class _PageAccueilState extends State<PageAccueil> {
     );
   }
 }
+
+
+
+// class ProductListScreen extends StatefulWidget {
+//   @override
+//   _ProductListScreenState createState() => _ProductListScreenState();
+// }
+
+
+// class _ProductListScreenState extends State<ProductListScreen> {
+//   TextEditingController _searchController = TextEditingController();
+//   List<Produit> _movies = [];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('OMDb Movie Search'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: _searchController,
+//               decoration: InputDecoration(labelText: 'Search Movies'),
+//               onSubmitted: (value) {
+//                 _searchProduct(value);
+//               },
+//             ),
+//             SizedBox(height: 16.0),
+//             Expanded(
+//               child: ListView.builder(
+//                 itemCount: _movies.length,
+//                 itemBuilder: (context, index) {
+//                   return ListTile(
+//                     title: Text(_movies[index].titre),
+//                     subtitle: Text(_movies[index].annee),
+//                     onTap: () => Navigator.push(
+//                       context,
+//                       MaterialPageRoute(builder: (BuildContext context) => MovieDetailScreen(movie:_movies[index]))
+//                     )
+//                   );
+//                 },
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   };
