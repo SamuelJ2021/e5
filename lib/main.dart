@@ -272,10 +272,10 @@ class PageAccueil extends StatefulWidget {
 
 
 class _PageAccueilState extends State<PageAccueil> {
-  
-  final _couleur1 = const Color.fromARGB(255, 190, 235, 255);
-  final _couleur2 = const Color.fromARGB(255, 207, 213, 33);
-  var _couleur = const Color.fromARGB(255, 190, 235, 255);
+  TextEditingController _productname = TextEditingController();
+  // final _couleur1 = const Color.fromARGB(255, 190, 235, 255);
+  // final _couleur2 = const Color.fromARGB(255, 207, 213, 33);
+  // var _couleur = const Color.fromARGB(255, 190, 235, 255);
 
   
   @override
@@ -297,6 +297,15 @@ class _PageAccueilState extends State<PageAccueil> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text("Connecté en tant qu'administrateur"),
+            TextFormField(  // Un champ de texte
+              controller: _productname,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Search the product',
+              ),
+              //textAlign: Center,
+            )
+            
           ],
         ),
       ),
