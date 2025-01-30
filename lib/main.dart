@@ -339,10 +339,11 @@ class _PageAccueilState extends State<PageAccueil> {
                   return ListTile(
                     title: Text(liste_produits[index].titre),
                     subtitle: Text(liste_produits[index].annee),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(nom:liste_produits[index]))
-                    )
+                    onTap:() => liste_produits[index],
+                    // onTap: () => Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(nom:liste_produits[index]))
+                    // )
                   );
                 },
               ),
