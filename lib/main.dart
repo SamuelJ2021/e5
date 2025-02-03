@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final url = Uri.parse('http://10.0.2.2:3000/utilisateurs/${temp.username}');//10.0.2.2//10.51.4.100//10.52.4.1
     print(url);
-    final response = await http.get(url);
+    // final response = await http.get(url);
     // print(response.statusCode);
     // if (response.statusCode == 200){
     //   print('Aucune erreur : ${response.statusCode}');
@@ -268,7 +268,7 @@ class PageAccueil extends StatefulWidget {
 
 
 class _PageAccueilState extends State<PageAccueil> {
-  var _couleur = const Color.fromARGB(255, 190, 235, 255);
+  // var _couleur = const Color.fromARGB(255, 190, 235, 255);
   TextEditingController _productname = TextEditingController();
   // List<Produit> _produits = [];
   List<Produit> liste_produits = [];
@@ -281,7 +281,7 @@ class _PageAccueilState extends State<PageAccueil> {
       if (response.statusCode == 200){
         print('Aucune erreur : ${response.statusCode}');
         print(response);
-        final temp = json.decode(response.body);
+        final data = json.decode(response.body);
         // print(liste_produits[0]);
         // final ans = data[0];
         // print(ans);  // Il faudrait afficher pareil quavatar
@@ -289,14 +289,18 @@ class _PageAccueilState extends State<PageAccueil> {
         //   final _products = data//data.map((movie) => Movie.fromJson(movie)).toList();
         // });
 
+
         setState(() {
-          for (var element in temp) {
-          print(element);
-          Produit produit = Produit.fromJson(element);
-          print(produit);
-          liste_produits.add(produit);
+          for (var element in data) {
+            print(element);
+            liste_produits.add(Produit.fromJson(element));
           }
         });
+        // final Map<String, dynamic> data = json.decode(response.body);
+        // final List<dynamic> movies = data['Search'];
+        // setState(() {
+        //   liste_produits = liste_produits.map((movie) => Produit.fromJson(movie)).toList();
+        // });
         
         // setState(() {
         //   liste_produits = liste_produits.map((element) => Produit.fromJson(element)).toList();
