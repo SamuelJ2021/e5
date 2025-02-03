@@ -243,12 +243,13 @@ class Utilisateur {
 
 class Produit {
   String nom;
-  Int prix;
-  Int stock;
+  int prix;
+  int stock;
 
   Produit({required this.nom, required this.prix, required this.stock});
 
   factory Produit.fromJson(Map<String, dynamic> json) {
+    // print(json);
     return Produit(
       nom: json['nom'],
       prix: json['prix'],
@@ -270,7 +271,7 @@ class _PageAccueilState extends State<PageAccueil> {
   var _couleur = const Color.fromARGB(255, 190, 235, 255);
   TextEditingController _productname = TextEditingController();
   // List<Produit> _produits = [];
-  List<dynamic> liste_produits = [];
+  List<Produit> liste_produits = [];
   
     Future<void> _searchProduct() async{
       final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
@@ -280,16 +281,27 @@ class _PageAccueilState extends State<PageAccueil> {
       if (response.statusCode == 200){
         print('Aucune erreur : ${response.statusCode}');
         print(response);
-        liste_produits = json.decode(response.body);
-        print(liste_produits[0]);
+        final temp = json.decode(response.body);
+        // print(liste_produits[0]);
         // final ans = data[0];
         // print(ans);  // Il faudrait afficher pareil quavatar
         // setState(() {
         //   final _products = data//data.map((movie) => Movie.fromJson(movie)).toList();
         // });
-        for (var element in liste_produits) {
+
+        setState(() {
+          for (var element in temp) {
           print(element);
-        }
+          Produit produit = Produit.fromJson(element);
+          print(produit);
+          liste_produits.add(produit);
+          }
+        });
+        
+        // setState(() {
+        //   liste_produits = liste_produits.map((element) => Produit.fromJson(element)).toList();
+        // });
+        print(liste_produits);
       }else{
         print('Erreur : ${response.statusCode}');
       }
@@ -337,8 +349,8 @@ class _PageAccueilState extends State<PageAccueil> {
                 itemCount: liste_produits.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(liste_produits[index].titre),
-                    subtitle: Text(liste_produits[index].annee),
+                    title: Text(liste_produits[index].nom),
+                    subtitle: Text(liste_produits[index].prix as String),
                     onTap:() => liste_produits[index],
                     // onTap: () => Navigator.push(
                     //   context,
@@ -348,7 +360,7 @@ class _PageAccueilState extends State<PageAccueil> {
                 },
               ),
             ),
-            Text('${liste_produits}')
+            // Text('${liste_produits}')
             
           ],
         ),
