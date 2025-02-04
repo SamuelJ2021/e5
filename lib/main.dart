@@ -276,6 +276,7 @@ class _PageAccueilState extends State<PageAccueil> {
   TextEditingController _productname = TextEditingController();
   // List<Produit> _produits = [];
   List<Produit> liste_produits = [];
+  dynamic data = [];
   
     Future<void> _searchProduct() async{
       final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
@@ -285,25 +286,16 @@ class _PageAccueilState extends State<PageAccueil> {
       if (response.statusCode == 200){
         print('Aucune erreur : ${response.statusCode}');
         print(response);
-        final data = json.decode(response.body);
 
         setState(() {
+          data = json.decode(response.body);
+          liste_produits = [];
           for (var element in data) {
             print(element);
             liste_produits.add(Produit.fromJson(element));
           }
-          print(liste_produits);
         });
-        // final Map<String, dynamic> data = json.decode(response.body);
-        // final List<dynamic> movies = data['Search'];
-        // setState(() {
-        //   liste_produits = liste_produits.map((movie) => Produit.fromJson(movie)).toList();
-        // });
-        
-        // setState(() {
-        //   liste_produits = liste_produits.map((element) => Produit.fromJson(element)).toList();
-        // });
-        print(liste_produits);
+
       }else{
         print('Erreur : ${response.statusCode}');
       }
@@ -348,15 +340,11 @@ class _PageAccueilState extends State<PageAccueil> {
                     title: Text(liste_produits[index].nom),
                     subtitle: Text('${liste_produits[index].prix}€'),//liste_produits[index].prix.toString()),
                     onTap:() => liste_produits[index],
-                    // onTap: () => Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(nom:liste_produits[index]))
-                    // )
+
                   );
                 },
               ),
             ),
-            // Text('${liste_produits}')
             
           ],
         ),
