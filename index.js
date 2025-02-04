@@ -86,9 +86,9 @@ app.get('/produits/:_nom', (req, res) => {
   if (err) {
       return res.status(500).send(err);
   }
-  if (results.length === 0) {
-      return res.status(404).json({ message: 'No product found' });
-  }
+  // if (results.length === 0) {
+  //     return res.status(404).json({ message: 'No product found' });
+  // }
   res.json(results);
   });
 });
