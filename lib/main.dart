@@ -256,6 +256,10 @@ class Produit {
       stock: json['stock']
     );
   }
+
+  String toString(){
+    return "Produit('${this.nom}', ${this.prix}, ${this.stock})";
+  }
 }
 
 class PageAccueil extends StatefulWidget {
@@ -282,19 +286,13 @@ class _PageAccueilState extends State<PageAccueil> {
         print('Aucune erreur : ${response.statusCode}');
         print(response);
         final data = json.decode(response.body);
-        // print(liste_produits[0]);
-        // final ans = data[0];
-        // print(ans);  // Il faudrait afficher pareil quavatar
-        // setState(() {
-        //   final _products = data//data.map((movie) => Movie.fromJson(movie)).toList();
-        // });
-
 
         setState(() {
           for (var element in data) {
             print(element);
             liste_produits.add(Produit.fromJson(element));
           }
+          print(liste_produits);
         });
         // final Map<String, dynamic> data = json.decode(response.body);
         // final List<dynamic> movies = data['Search'];
@@ -327,13 +325,7 @@ class _PageAccueilState extends State<PageAccueil> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text("Connecté en tant qu'administrateur"),
-            // TextField(
-            //   controller: _productname,
-            //   decoration: const InputDecoration(labelText: 'Search Movies'),
-            //   onSubmitted: (value) {
-            //     () async {await _searchProduct();};
-            //   },
-            // ),
+
             TextFormField(  // Un champ de texte
               controller: _productname,
               decoration: const InputDecoration(
@@ -347,14 +339,14 @@ class _PageAccueilState extends State<PageAccueil> {
               backgroundColor: Colors.green,
               child: const Icon(Icons.check),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
                 itemCount: liste_produits.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(liste_produits[index].nom),
-                    subtitle: Text(liste_produits[index].prix as String),
+                    subtitle: Text('${liste_produits[index].prix}€'),//liste_produits[index].prix.toString()),
                     onTap:() => liste_produits[index],
                     // onTap: () => Navigator.push(
                     //   context,
