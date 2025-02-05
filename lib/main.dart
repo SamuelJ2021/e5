@@ -249,7 +249,6 @@ class Produit {
   Produit({required this.nom, required this.prix, required this.stock});
 
   factory Produit.fromJson(Map<String, dynamic> json) {
-    // print(json);
     return Produit(
       nom: json['nom'],
       prix: json['prix'],
@@ -274,16 +273,13 @@ class PageAccueil extends StatefulWidget {
 class _PageAccueilState extends State<PageAccueil> {
   // var _couleur = const Color.fromARGB(255, 190, 235, 255);
   TextEditingController _productname = TextEditingController();
-  // List<Produit> _produits = [];
   List<Produit> liste_produits = [];
   dynamic data = [];
-  bool _isLoading = true;
   
     Future<void> _searchProduct() async{
       final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
       print(url);
       final response = await http.get(url);
-      // print(response.statusCode);
       if (response.statusCode == 200){
         print('Aucune erreur : ${response.statusCode}');
         print(response);
@@ -295,7 +291,6 @@ class _PageAccueilState extends State<PageAccueil> {
             print(element);
             liste_produits.add(Produit.fromJson(element));
           }
-          _isLoading = false;
         });
 
       }else{
@@ -341,7 +336,6 @@ class _PageAccueilState extends State<PageAccueil> {
                   return ListTile(
                     title: Text(liste_produits[index].nom),
                     subtitle: Text('${liste_produits[index].prix}€'),//liste_produits[index].prix.toString()),
-                    // onTap:() => liste_produits[index],
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])))
@@ -367,104 +361,39 @@ class ProduitDetailScreen extends StatefulWidget{
 
 
 class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
-  Map<String, dynamic>? _produitDetails;
-  bool _isLoading = true;
 
   @override
   void initState(){
     super.initState();
-    // _getMovie();
+    print(widget.produit);
   }
+
+
   @override
     Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.produit.nom),//widget.movie.titre ?? 'Details du film'),
       ),
-      body: _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : _produitDetails == null
-          ? Center(child: Text('Erreur de chargement'))
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${_produitDetails!['nom']}')
-                  // Text(
-                  //   '${_movieDetails!['Title']}',
-                  //   style: TextStyle(
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.bold,
-                  //     )
-                  // ),
-                  // SizedBox(height: 10),
-                  // Text(
-                  //   'Année: ${_movieDetails!['Year']}'
-                  // ),
-                  // SizedBox(height: 10),
-                  // Text(
-                  //   'Genre: ${_movieDetails!['Genre']}'
-                  // ),
-                  // SizedBox(height: 10),
-                  // Text(
-                  //   'Réalisateur: ${_movieDetails!['Director']}'
-                  // ),
-                  // SizedBox(height: 10),
-                  // Text(
-                  //   'Résumé: ${_movieDetails!['Plot']}'
-                  // )
-                ]
-              )
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                widget.produit.nom,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  )
+                  ),
+              Text('${widget.produit.prix}€'),
+              Text('${widget.produit.stock} available')
+            ],
           )
-          );
+        )
+      )
+    );
+    
     }
 }
-// // class ProductListScreen extends StatefulWidget {
-// //   @override
-// //   _ProductListScreenState createState() => _ProductListScreenState();
-// // }
-
-
-// // class _ProductListScreenState extends State<ProductListScreen> {
-// //   TextEditingController _searchController = TextEditingController();
-// //   List<Produit> _movies = [];
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       appBar: AppBar(
-// //         title: Text('OMDb Movie Search'),
-// //       ),
-// //       body: Padding(
-// //         padding: const EdgeInsets.all(16.0),
-// //         child: Column(
-// //           children: [
-// //             TextField(
-// //               controller: _searchController,
-// //               decoration: InputDecoration(labelText: 'Search Movies'),
-// //               onSubmitted: (value) {
-// //                 _searchProduct(value);
-// //               },
-// //             ),
-// //             SizedBox(height: 16.0),
-// //             Expanded(
-// //               child: ListView.builder(
-// //                 itemCount: _movies.length,
-// //                 itemBuilder: (context, index) {
-// //                   return ListTile(
-// //                     title: Text(_movies[index].titre),
-// //                     subtitle: Text(_movies[index].annee),
-// //                     onTap: () => Navigator.push(
-// //                       context,
-// //                       MaterialPageRoute(builder: (BuildContext context) => MovieDetailScreen(movie:_movies[index]))
-// //                     )
-// //                   );
-// //                 },
-// //               ),
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   };
