@@ -122,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //     print('Administrateur');
       //     // changer d'écran
           Navigator.push(context, MaterialPageRoute(builder: (context){
-            return PageAccueil(title: "Accueil");
+            return const PageAccueil(title: "Accueil");
           }));
       //   }else{
       //     print('Pas administrateur');
@@ -333,27 +333,27 @@ class _PageAccueilState extends State<PageAccueil> {
     }
   }
 
-  Future<void> ajouterProduit(Produit pro) async {
-    //si les champs textes ne sont pas vides alors
-    final url = Uri.parse('http://10.0.2.2:3000/insert_produit');
-    final headers = {'Content-Type': 'application/json'};
-    final body = json.encode(pro.toMap());
-    try {
-      final response = await http.post(
-      url,
-      headers: headers,
-      body: body
-      );
-      if (response.statusCode == 200) {
-        print('Produit ajouté !');
-        print('Réponse: ${response.body}');
-      } else {
-        print('Échec de l\'ajout, erreur : ${response.statusCode}');
-      }
-    } catch (e) {
-    print('Error: $e');
-    }
-  }
+  // Future<void> ajouterProduit(Produit pro) async {
+  //   //si les champs textes ne sont pas vides alors
+  //   final url = Uri.parse('http://10.0.2.2:3000/insert_produit');
+  //   final headers = {'Content-Type': 'application/json'};
+  //   final body = json.encode(pro.toMap());
+  //   try {
+  //     final response = await http.post(
+  //     url,
+  //     headers: headers,
+  //     body: body
+  //     );
+  //     if (response.statusCode == 200) {
+  //       print('Produit ajouté !');
+  //       print('Réponse: ${response.body}');
+  //     } else {
+  //       print('Échec de l\'ajout, erreur : ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //   print('Error: $e');
+  //   }
+  // }
 
   // Future<void> _addProduct(Produit pro) async{
   //   final url = Uri.parse('http://10.0.2.2:3000/produits/${pro.nom}');
@@ -392,16 +392,16 @@ class _PageAccueilState extends State<PageAccueil> {
               onPressed: () async {await _searchProduct();},// async {await _searchUser();},
               tooltip: 'Validate',
               backgroundColor: Colors.green,
-              child: const Icon(Icons.check),
+              child: const Text('Chercher'),//Icon(Icons.check),
             ),
             FloatingActionButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context){
-                return PageAccueil(title: "Ajouter produit");
+                return AjoutProduitDetailScreen();//title: "Ajouter produit");
               })),
               //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
-              tooltip: 'Validate',
+              tooltip: 'Ajouter',
               backgroundColor: Colors.green,
-              child: const Icon(Icons.check),
+              child: const Text('Ajouter')//Icon(Icons.check),
             ),
             const SizedBox(height: 16.0),
             Expanded(
@@ -462,7 +462,7 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
                   )
                   ),
               Text('${widget.produit.prix}€'),
-              Text('${widget.produit.stock} available')
+              Text('${widget.produit.stock} available'),
             ],
           )
         )
@@ -473,18 +473,42 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
 }
 
 class AjoutProduitDetailScreen extends StatefulWidget{
-  final Produit produit;
-  AjoutProduitDetailScreen({required this.produit});
+  // final String title;//Produit produit;
+  AjoutProduitDetailScreen();//required this.title});//required this.produit});
   @override
   _AjoutProduitDetailScreenState createState() => _AjoutProduitDetailScreenState();
 }
 
-class _AjoutProduitDetailScreenState extends State<ProduitDetailScreen>{
+class _AjoutProduitDetailScreenState extends State<AjoutProduitDetailScreen>{
+
+  Future<void> ajouterProduit(Produit pro) async {
+    //si les champs textes ne sont pas vides alors
+    final url = Uri.parse('http://10.0.2.2:3000/insert_produit');
+    final headers = {'Content-Type': 'application/json'};
+    final body = json.encode(pro.toMap());
+    try {
+      final response = await http.post(
+      url,
+      headers: headers,
+      body: body
+      );
+      if (response.statusCode == 200) {
+        print('Produit ajouté !');
+        print('Réponse: ${response.body}');
+      } else {
+        print('Échec de l\'ajout, erreur : ${response.statusCode}');
+      }
+    } catch (e) {
+    print('Error: $e');
+    }
+  }
+  TextEditingController _productnom = TextEditingController();
+  TextEditingController _productprix = TextEditingController();
+  TextEditingController _productstock = TextEditingController();
 
   @override
   void initState(){
     super.initState();
-    print(widget.produit);
   }
 
 
@@ -492,22 +516,44 @@ class _AjoutProduitDetailScreenState extends State<ProduitDetailScreen>{
     Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.produit.nom),//widget.movie.titre ?? 'Details du film'),
+        title: const Text('Ajouter produit'),//widget.movie.titre ?? 'Details du film'),
       ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                widget.produit.nom,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  )
-                  ),
-              Text('${widget.produit.prix}€'),
-              Text('${widget.produit.stock} available')
+              TextFormField(  // Un champ de texte
+              controller: _productnom,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Nom du produit',
+                ),
+              ),
+              TextFormField(  // Un champ de texte
+              controller: _productprix,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Prix du produit',
+                ),
+              ),
+              TextFormField(  // Un champ de texte
+              controller: _productstock,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Stock du produit',
+                ),
+              ),
+              FloatingActionButton(
+              onPressed: () => ajouterProduit(Produit(
+                nom: _productnom.text,
+                prix: int.parse(_productprix.text),
+                stock: int.parse(_productstock.text))),
+              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
+              tooltip: 'Ajouter',
+              backgroundColor: Colors.green,
+              child: const Text('Ajouter')//Icon(Icons.check),
+            ),
             ],
           )
         )
