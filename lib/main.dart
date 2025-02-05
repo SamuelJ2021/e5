@@ -4,6 +4,34 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// Future<void> insertProduit() async {
+//   final url = Uri.parse('http://localhost:3000/insert_produit'); // API endpoint
+
+//   // Request body
+//   final Map<String, dynamic> data = {
+//     "nom": "Produit Test",
+//     "prix": 11,
+//     "stock": 50
+//   };
+
+//   try {
+//     final response = await http.post(
+//       url,
+//       headers: {"Content-Type": "application/json"}, // Set headers
+//       body: jsonEncode(data), // Convert map to JSON string
+//     );
+
+//     if (response.statusCode == 200) {
+//       print("✅ Success: ${response.body}");
+//     } else {
+//       print("❌ Error: ${response.statusCode}, ${response.body}");
+//     }
+//   } catch (e) {
+//     print("⚠️ Exception: $e");
+//   }
+// }
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -257,7 +285,14 @@ class Produit {
   }
   @override
   String toString(){
-    return "Produit('${this.nom}', ${this.prix}, ${this.stock})";
+    return "Produit('$nom', $prix, $stock)";
+  }
+  Map<dynamic, dynamic> toMap(){
+    return {
+      'nom': nom,
+      'prix': prix,
+      'stock': stock
+      };
   }
 }
 
@@ -276,27 +311,58 @@ class _PageAccueilState extends State<PageAccueil> {
   List<Produit> liste_produits = [];
   dynamic data = [];
   
-    Future<void> _searchProduct() async{
-      final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
-      print(url);
-      final response = await http.get(url);
-      if (response.statusCode == 200){
-        print('Aucune erreur : ${response.statusCode}');
-        print(response);
+  Future<void> _searchProduct() async{
+    final url = Uri.parse('http://10.0.2.2:3000/produits/${_productname.text}');//10.0.2.2//10.51.4.100//10.52.4.1
+    print(url);
+    final response = await http.get(url);
+    if (response.statusCode == 200){
+      print('Aucune erreur : ${response.statusCode}');
+      print(response);
 
-        setState(() {
-          data = json.decode(response.body);
-          liste_produits = [];
-          for (var element in data) {
-            print(element);
-            liste_produits.add(Produit.fromJson(element));
-          }
-        });
+      setState(() {
+        data = json.decode(response.body);
+        liste_produits = [];
+        for (var element in data) {
+          // print(element);
+          liste_produits.add(Produit.fromJson(element));
+        }
+      });
 
-      }else{
-        print('Erreur : ${response.statusCode}');
-      }
+    }else{
+      print('Erreur : ${response.statusCode}');
     }
+  }
+
+  Future<void> ajouterProduit(Produit pro) async {
+    //si les champs textes ne sont pas vides alors
+    final url = Uri.parse('http://10.0.2.2:3000/insert_produit');
+    final headers = {'Content-Type': 'application/json'};
+    final body = json.encode(pro.toMap());
+    try {
+      final response = await http.post(
+      url,
+      headers: headers,
+      body: body
+      );
+      if (response.statusCode == 200) {
+        print('Produit ajouté !');
+        print('Réponse: ${response.body}');
+      } else {
+        print('Échec de l\'ajout, erreur : ${response.statusCode}');
+      }
+    } catch (e) {
+    print('Error: $e');
+    }
+  }
+
+  // Future<void> _addProduct(Produit pro) async{
+  //   final url = Uri.parse('http://10.0.2.2:3000/produits/${pro.nom}');
+  //   final response = await http.get(url);
+  //   if (response.statusCode == 200 || response.contentLength == 0){
+  //     // final url = Uri.parse('http://10.0.2.2:3000/insert_produit/${pro.nom}');
+  //     // final ans = await http.post(url);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -328,6 +394,15 @@ class _PageAccueilState extends State<PageAccueil> {
               backgroundColor: Colors.green,
               child: const Icon(Icons.check),
             ),
+            FloatingActionButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context){
+                return PageAccueil(title: "Ajouter produit");
+              })),
+              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
+              tooltip: 'Validate',
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.check),
+            ),
             const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
@@ -339,7 +414,6 @@ class _PageAccueilState extends State<PageAccueil> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])))
-
                   );
                 },
               ),
@@ -361,6 +435,51 @@ class ProduitDetailScreen extends StatefulWidget{
 
 
 class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
+
+  @override
+  void initState(){
+    super.initState();
+    print(widget.produit);
+  }
+
+
+  @override
+    Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.produit.nom),//widget.movie.titre ?? 'Details du film'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                widget.produit.nom,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  )
+                  ),
+              Text('${widget.produit.prix}€'),
+              Text('${widget.produit.stock} available')
+            ],
+          )
+        )
+      )
+    );
+    
+    }
+}
+
+class AjoutProduitDetailScreen extends StatefulWidget{
+  final Produit produit;
+  AjoutProduitDetailScreen({required this.produit});
+  @override
+  _AjoutProduitDetailScreenState createState() => _AjoutProduitDetailScreenState();
+}
+
+class _AjoutProduitDetailScreenState extends State<ProduitDetailScreen>{
 
   @override
   void initState(){
