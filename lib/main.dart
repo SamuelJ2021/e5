@@ -483,7 +483,7 @@ class _AjoutProduitDetailScreenState extends State<AjoutProduitDetailScreen>{
 
   Future<void> ajouterProduit(Produit pro) async {
     //si les champs textes ne sont pas vides alors
-    final url = Uri.parse('http://10.0.2.2:3000/insert_produit');
+    final url = Uri.parse('http://10.0.2.2:3000/produits');
     final headers = {'Content-Type': 'application/json'};
     final body = json.encode(pro.toMap());
     try {

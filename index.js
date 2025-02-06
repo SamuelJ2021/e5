@@ -93,12 +93,12 @@ app.get('/produits/:_nom', (req, res) => {
   });
 });
 
-app.post('/insert_produit', (req, res) => {
+app.post('/produits', (req, res) => {//app.post('/insert_produit', (req, res) => {
   const { nom, prix, stock } = req.body;
   if (!nom || prix == null || stock == null) {
     return res.status(400).json({ error: 'Nom, prix, and stock are required' });
   }
-  const sql = 'INSERT INTO produits (nom, prix, stock) VALUES (?, ?, ?)';
+  const sql = 'CALL insert_or_update_produit(?, ?, ?)';
   db.query(sql, [nom, prix, stock], (err, result) => {
     if (err) {
       console.error('Database insertion error:', err);
