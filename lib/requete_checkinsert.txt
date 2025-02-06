@@ -22,12 +22,34 @@ CREATE PROCEDURE insert_or_update_produit(
     IN p_stock INT)
 BEGIN
     DECLARE v_count INT;
-    SELECT COUNT(*) INTO v_count FROM produits WHERE nom = p_nom;
+    SELECT COUNT(*) INTO v_count FROM produits WHERE nom = p_nom  AND prix = p_prix;
     IF v_count > 0 THEN
-        UPDATE produits SET stock = stock + p_stock WHERE nom = p_nom AND prix = p_prix;
+        UPDATE produits SET stock = stock + p_stock WHERE nom = p_nom;
     ELSE
         INSERT INTO produits (nom, prix, stock) VALUES (p_nom, p_prix, p_stock);
     END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_produit(
+    IN p_nom VARCHAR(255),
+    IN p_prix INT,
+    IN p_stock INT)
+BEGIN
+    UPDATE produits SET stock = stock + p_stock WHERE nom = p_nom;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE change_stock_produit(
+    IN p_nom VARCHAR(255),
+    IN p_prix INT,
+    IN p_stock INT)
+BEGIN
+    UPDATE produits SET stock = p_stock WHERE nom = p_nom;
 END;
 //
 DELIMITER ;

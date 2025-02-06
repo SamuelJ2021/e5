@@ -388,20 +388,24 @@ class _PageAccueilState extends State<PageAccueil> {
                 labelText: 'Search the product',
               ),
             ),
-            FloatingActionButton(
-              onPressed: () async {await _searchProduct();},// async {await _searchUser();},
-              tooltip: 'Validate',
-              backgroundColor: Colors.green,
-              child: const Text('Chercher'),//Icon(Icons.check),
-            ),
-            FloatingActionButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context){
-                return AjoutProduitDetailScreen();//title: "Ajouter produit");
-              })),
-              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
-              tooltip: 'Ajouter',
-              backgroundColor: Colors.green,
-              child: const Text('Ajouter')//Icon(Icons.check),
+            Row(
+              children: [
+                FloatingActionButton(
+                  onPressed: () async {await _searchProduct();},// async {await _searchUser();},
+                  tooltip: 'Validate',
+                  backgroundColor: Colors.green,
+                  child: const Text('Chercher'),//Icon(Icons.check),
+                ),
+                FloatingActionButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return AjoutProduitDetailScreen();//title: "Ajouter produit");
+                  })),
+                  //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
+                  tooltip: 'Ajouter',
+                  backgroundColor: Colors.green,
+                  child: const Text('Ajouter')//Icon(Icons.check),
+                ),
+              ],
             ),
             const SizedBox(height: 16.0),
             Expanded(
@@ -436,6 +440,32 @@ class ProduitDetailScreen extends StatefulWidget{
 
 class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
 
+  Future<void> updateProduit(int stock) async {
+    //si les champs textes ne sont pas vides alors
+    final url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
+    final headers = {'Content-Type': 'application/json'};
+    setState(() {
+      widget.produit.stock += stock;
+    });
+    final body = json.encode(widget.produit.toMap());
+    try {
+      final response = await http.post(
+      url,
+      headers: headers,
+      body: body
+      );
+      if (response.statusCode == 200) {
+        print('Produit ajouté !');
+        print('Réponse: ${response.body}');
+      } else {
+        print('Échec de l\'ajout, erreur : ${response.statusCode}');
+      }
+    } catch (e) {
+    print('Error: $e');
+    }
+  }
+  TextEditingController _stock = TextEditingController();
+
   @override
   void initState(){
     super.initState();
@@ -463,6 +493,40 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
                   ),
               Text('${widget.produit.prix}€'),
               Text('${widget.produit.stock} available'),
+              TextFormField(  // Un champ de texte
+              controller: _stock,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Stock à ajouter',
+                ),
+              ),
+              Row(
+                children: [
+                  FloatingActionButton(
+                    onPressed: () => setState(() {
+                      int currentStock = int.tryParse(_stock.text) ?? 0;
+                      _stock.text = (currentStock - 1).toString();//widget.produit.stock -= 1;
+                    }),
+                    tooltip: 'Decrement',
+                    child: const Icon(Icons.remove),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () => setState(() {
+                      int currentStock = int.tryParse(_stock.text) ?? 0;
+                      _stock.text = (currentStock + 1).toString();
+                    }),
+                    tooltip: 'Increment',
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+              FloatingActionButton(
+              onPressed: () => updateProduit(int.parse(_stock.text)),
+              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
+              tooltip: 'Valider',
+              backgroundColor: Colors.green,
+              child: const Text('Valider')//Icon(Icons.check),
+              ),
             ],
           )
         )
@@ -483,7 +547,7 @@ class _AjoutProduitDetailScreenState extends State<AjoutProduitDetailScreen>{
 
   Future<void> ajouterProduit(Produit pro) async {
     //si les champs textes ne sont pas vides alors
-    final url = Uri.parse('http://10.0.2.2:3000/produits');
+    final url = Uri.parse('http://10.0.2.2:3000/insert_or_update_produit');
     final headers = {'Content-Type': 'application/json'};
     final body = json.encode(pro.toMap());
     try {
