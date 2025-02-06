@@ -465,6 +465,8 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
     }
   }
   TextEditingController _stock = TextEditingController();
+  TextEditingController _newnom = TextEditingController();
+  TextEditingController _newprix = TextEditingController();
 
   @override
   void initState(){
@@ -519,6 +521,20 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
                     child: const Icon(Icons.add),
                   ),
                 ],
+              ),
+              FloatingActionButton(
+              onPressed: () => updateProduit(int.parse(_stock.text)),
+              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
+              tooltip: 'Valider',
+              backgroundColor: Colors.green,
+              child: const Text('Valider')//Icon(Icons.check),
+              ),
+              TextFormField(  // Un champ de texte
+              controller: _newnom,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Nouveau nom',
+                ),
               ),
               FloatingActionButton(
               onPressed: () => updateProduit(int.parse(_stock.text)),

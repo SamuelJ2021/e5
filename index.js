@@ -123,16 +123,19 @@ app.post('/change_stock_produit', (req, res) => {//app.post('/insert_produit', (
   });
 });
 
-// app.post('/update_produit', (req, res) => {
-//   const { nom, prix, stock } = req.body;
-//   const sql = 'INSERT INTO produits (nom, prix, stock) VALUES (?, ?, ?)';
-//   db.query(sql, [nom, prix, stock], (err, result) => {
-//     if (err) {
-//       return res.status(500).send(err);
-//     }
-//     res.json({ id: result.insertId, username, mdp });
-//   });
-// });
+app.post('/change_nom_produit/:oldname/:newname', (req, res) => {
+  const { oldname, newname } = req.params; // Récupération des paramètres dans l'URL
+
+  const sql = 'CALL change_nom_produit(?, ?)';
+
+  db.query(sql, [oldname, newname], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ success: true, message: `Le produit "${oldname}" a été renommé en "${newname}".` });
+  });
+});
+
 
 // Démarrage du serveur
 app.listen(port, () => {

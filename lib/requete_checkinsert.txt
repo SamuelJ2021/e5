@@ -53,3 +53,69 @@ BEGIN
 END;
 //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER checkinsert
+BEFORE INSERT ON produits
+FOR EACH ROW
+BEGIN
+    DECLARE temp_name VARCHAR(255);
+    DECLARE i INT DEFAULT 0;
+    SET temp_name = NEW.nom;
+    WHILE EXISTS (SELECT 1 FROM produits WHERE nom = temp_name) DO
+        SET i = i + 1;
+        SET temp_name = CONCAT(NEW.nom, '_', i);
+    END WHILE;
+    SET NEW.nom = temp_name;
+	END//
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER checkupdate
+BEFORE UPDATE ON produits
+FOR EACH ROW
+BEGIN
+    DECLARE temp_name VARCHAR(255);
+    DECLARE i INT DEFAULT 0;
+    SET temp_name = NEW.nom;
+    WHILE EXISTS (SELECT 1 FROM produits WHERE nom = temp_name) DO
+        SET i = i + 1;
+        SET temp_name = CONCAT(NEW.nom, '_', i);
+    END WHILE;
+    SET NEW.nom = temp_name;
+	END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS change_nom_produit;
+DELIMITER //
+
+CREATE PROCEDURE change_nom_produit(
+    IN oldname VARCHAR(255),
+    IN newname VARCHAR(255))
+BEGIN
+    -- Vérifier si le nouveau nom existe déjà
+    IF (SELECT COUNT(*) FROM produits WHERE nom = newname) = 0 THEN
+        UPDATE produits SET nom = newname WHERE nom = oldname;
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- app.post('/change_nom_produit/:oldname/:newname', (req, res) => {
+--   const { oldname, newname } = req.params; // Récupération des paramètres dans l'URL
+
+--   const sql = 'CALL change_nom_produit(?, ?)';
+
+--   db.query(sql, [oldname, newname], (err, result) => {
+--     if (err) {
+--       return res.status(500).json({ error: err.message });
+--     }
+--     res.json({ success: true, message: `Le produit "${oldname}" a été renommé en "${newname}".` });
+--   });
+-- });
