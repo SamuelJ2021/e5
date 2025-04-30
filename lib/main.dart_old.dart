@@ -109,30 +109,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final url = Uri.parse('http://10.0.2.2:3000/utilisateurs/${temp.username}');//10.0.2.2//10.51.4.100//10.52.4.1
     print(url);
-    final response = await http.get(url);
-    print(response.statusCode);
-    if (response.statusCode == 200){
-      print('Aucune erreur : ${response.statusCode}');
-      final List<dynamic> data = json.decode(response.body);
-      final mdp = data[0]['mdp'];
-      if (_password == mdp){
-        print('Connecté');
-        final idrole = data[0]['idRole'];
-        if (idrole == 1){
-          print('Administrateur');
-          // changer d'écran
+    // final response = await http.get(url);
+    // print(response.statusCode);
+    // if (response.statusCode == 200){
+    //   print('Aucune erreur : ${response.statusCode}');
+    //   final List<dynamic> data = json.decode(response.body);
+      // final mdp = data[0]['mdp'];
+      // if (_password == mdp){
+      //   print('Connecté');
+      //   final idrole = data[0]['idRole'];
+      //   if (idrole == 1){
+      //     print('Administrateur');
+      //     // changer d'écran
           Navigator.push(context, MaterialPageRoute(builder: (context){
             return const PageAccueil(title: "Accueil");
           }));
-        }else{
-          print('Pas administrateur');
-        }
-      }else{
-        print('Connexion échouée');
-      }
-    }else{
-      print('Erreur : ${response.statusCode}');
-    }
+      //   }else{
+      //     print('Pas administrateur');
+      //   }
+      // }else{
+      //   print('Connexion échouée');
+      // }
+    // }else{
+    //   print('Erreur : ${response.statusCode}');
+    // }
   }
 
   // void _sU(String query){
@@ -440,40 +440,13 @@ class ProduitDetailScreen extends StatefulWidget{
 
 class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
 
-  Future<void> updateProduit(
-    {int? stock, String? newnom, int? newprix}
-  ) async {
+  Future<void> updateProduit(int stock) async {
     //si les champs textes ne sont pas vides alors
-    Uri url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
-    // if (newnom != null){
-    //   url = Uri.parse('http://10.0.2.2:3000/change_nom_produit');}
-    // print(url);
-    // }else if (newprix != null){
-    //   url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
-    
-    // }else{
-    //   final url = Uri.parse('http://10.0.2.2:3000/change_nom_produit/${widget.produit.nom}/$newnom');
-    // }
-    
-    
+    final url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
     final headers = {'Content-Type': 'application/json'};
     setState(() {
-      if (stock != null){
-        url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
-        widget.produit.stock += stock;
-      }
-      print(newnom);
-      if (newnom != null){
-        url = Uri.parse('http://10.0.2.2:3000/change_nom_produit/${widget.produit.nom}/$newnom');
-        widget.produit.nom = newnom;
-        }
-      if (newprix != null){
-        url = Uri.parse('http://10.0.2.2:3000/change_prix_produit/${widget.produit.nom}/$newprix');
-        widget.produit.prix = newprix;
-      }
-      print(url);
+      widget.produit.stock += stock;
     });
-    print(widget.produit.toMap());
     final body = json.encode(widget.produit.toMap());
     try {
       final response = await http.post(
@@ -482,10 +455,10 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
       body: body
       );
       if (response.statusCode == 200) {
-        print('Produit modifié !');
+        print('Produit ajouté !');
         print('Réponse: ${response.body}');
       } else {
-        print('Échec de la modification, erreur : ${response.statusCode}');
+        print('Échec de l\'ajout, erreur : ${response.statusCode}');
       }
     } catch (e) {
     print('Error: $e');
@@ -550,10 +523,10 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
                 ],
               ),
               FloatingActionButton(
-              onPressed: () => updateProduit(stock:int.parse(_stock.text)),
+              onPressed: () => updateProduit(int.parse(_stock.text)),
               //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
               tooltip: 'Valider',
-              backgroundColor: const Color.fromARGB(255, 0, 255, 77),
+              backgroundColor: Colors.green,
               child: const Text('Valider')//Icon(Icons.check),
               ),
               TextFormField(  // Un champ de texte
@@ -564,24 +537,10 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
                 ),
               ),
               FloatingActionButton(
-              onPressed: () => updateProduit(newnom: _newnom.text),
+              onPressed: () => updateProduit(int.parse(_stock.text)),
               //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
               tooltip: 'Valider',
-              backgroundColor: const Color.fromARGB(255, 0, 255, 77),
-              child: const Text('Valider')//Icon(Icons.check),
-              ),
-              TextFormField(  // Un champ de texte
-              controller: _newprix,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Nouveau prix',
-                ),
-              ),
-              FloatingActionButton(
-              onPressed: () => updateProduit(newprix: int.parse(_newprix.text)),
-              //MaterialPageRoute(builder: (BuildContext context) => ProduitDetailScreen(produit:liste_produits[index])),
-              tooltip: 'Valider',
-              backgroundColor: const Color.fromARGB(255, 0, 255, 77),
+              backgroundColor: Colors.green,
               child: const Text('Valider')//Icon(Icons.check),
               ),
             ],
