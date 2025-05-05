@@ -444,29 +444,21 @@ class _ProduitDetailScreenState extends State<ProduitDetailScreen>{
     {int? stock, String? newnom, int? newprix}
   ) async {
     //si les champs textes ne sont pas vides alors
-    Uri url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
-    // if (newnom != null){
-    //   url = Uri.parse('http://10.0.2.2:3000/change_nom_produit');}
-    // print(url);
-    // }else if (newprix != null){
-    //   url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
-    
-    // }else{
-    //   final url = Uri.parse('http://10.0.2.2:3000/change_nom_produit/${widget.produit.nom}/$newnom');
-    // }
+    Uri url = Uri.parse('http://10.0.2.2:3000/change_nom_produit');
+
     
     
     final headers = {'Content-Type': 'application/json'};
     setState(() {
+      if (newnom != null){
+        url = Uri.parse('http://10.0.2.2:3000/change_nom_produit/${widget.produit.nom}/${newnom}');
+        widget.produit.nom = newnom;
+      }
       if (stock != null){
         url = Uri.parse('http://10.0.2.2:3000/change_stock_produit');
         widget.produit.stock += stock;
       }
-      print(newnom);
-      if (newnom != null){
-        url = Uri.parse('http://10.0.2.2:3000/change_nom_produit/${widget.produit.nom}/$newnom');
-        widget.produit.nom = newnom;
-        }
+      // print(newnom);
       if (newprix != null){
         url = Uri.parse('http://10.0.2.2:3000/change_prix_produit/${widget.produit.nom}/$newprix');
         widget.produit.prix = newprix;

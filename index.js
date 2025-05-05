@@ -127,8 +127,9 @@ app.post('/change_stock_produit', (req, res) => {//app.post('/insert_produit', (
 });
 
 app.post('/change_nom_produit/:oldname/:newname', (req, res) => {
+  console.log('oldname : ${oldname}, newname : ${newname}')
   const { oldname, newname } = req.params; // Récupération des paramètres dans l'URL
-
+  
   const sql = 'CALL change_nom_produit(?, ?)';
 
   db.query(sql, [oldname, newname], (err, result) => {
@@ -149,7 +150,7 @@ app.post('/change_prix_produit/:orname/:newprix', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ success: true, message: `Le produit "${orname}" a été renommé en "${newname}".` });
+    res.json({ success: true, message: `Le prix du produit "${orname}" est maintenant de "${newprix}".` });
   });
 });
 
