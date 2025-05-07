@@ -95,6 +95,7 @@ app.get('/produits/:_nom', (req, res) => {
 
 app.post('/insert_or_update_produit', (req, res) => {//app.post('/insert_produit', (req, res) => {
   const { nom, prix, stock } = req.body;
+  console.log(nom, prix, stock);
   if (!nom || prix == null || stock == null) {
     return res.status(400).json({ error: 'Nom, prix, and stock are required' });
   }

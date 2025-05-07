@@ -82,8 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var _couleur = const Color.fromARGB(255, 190, 235, 255);
 
   int _counter = 10;
-  TextEditingController usernameController = TextEditingController(); // Il va stocker username
-  TextEditingController passwordController = TextEditingController(); // Il va stocker password
+  TextEditingController usernameController = TextEditingController(text: 'salut'); // Il va stocker username
+  TextEditingController passwordController = TextEditingController(text: 'pass123'); // Il va stocker password
 
   String _username = '';
   String _password = '';
@@ -199,6 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const Text('Username'),
             TextFormField(  // Un champ de texte
+              // initialValue: 'salut',
               controller: usernameController,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
@@ -207,10 +208,11 @@ class _MyHomePageState extends State<MyHomePage> {
               //textAlign: Center,
             ),
             const Text('Password'),
-            TextFormField(  // Un champ de texte// https://stackoverflow.com/questions/49125064/how-to-show-hide-password-in-textformfield
+            TextFormField(
+              // initialValue: 'pass123',  // Un champ de texte// https://stackoverflow.com/questions/49125064/how-to-show-hide-password-in-textformfield
             //keyboardType: TextInputType.text,
-            controller: passwordController,
-            obscureText: true,//!_passwordVisible,
+              controller: passwordController,
+              obscureText: true,//!_passwordVisible,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Enter your password',
@@ -599,6 +601,7 @@ class _AjoutProduitDetailScreenState extends State<AjoutProduitDetailScreen>{
     final url = Uri.parse('http://10.0.2.2:3000/insert_or_update_produit');
     final headers = {'Content-Type': 'application/json'};
     final body = json.encode(pro.toMap());
+    print(body);
     try {
       final response = await http.post(
       url,
