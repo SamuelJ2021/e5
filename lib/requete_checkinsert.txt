@@ -1,0 +1,121 @@
+DELIMITER //
+CREATE TRIGGER checkinsert
+BEFORE INSERT ON produits
+FOR EACH ROW
+BEGIN
+	DECLARE v_count INT;
+    SELECT COUNT(id) INTO v_count FROM produits WHERE nom = NEW.nom AND prix = NEW.prix;
+    IF v_count > 0 THEN
+        UPDATE produits SET stock = stock + NEW.stock WHERE nom = NEW.nom;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insertion ignorée, stock mis à jour';
+    END IF;
+END;
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS checkinsert;
+DROP PROCEDURE IF EXISTS insert_or_update_produit;
+DELIMITER //
+CREATE PROCEDURE insert_or_update_produit(
+    IN p_nom VARCHAR(255),
+    IN p_prix INT,
+    IN p_stock INT)
+BEGIN
+    DECLARE v_count INT;
+    SELECT COUNT(*) INTO v_count FROM produits WHERE nom = p_nom  AND prix = p_prix;
+    IF v_count > 0 THEN
+        UPDATE produits SET stock = stock + p_stock WHERE nom = p_nom;
+    ELSE
+        INSERT INTO produits (nom, prix, stock) VALUES (p_nom, p_prix, p_stock);
+    END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_produit(
+    IN p_nom VARCHAR(255),
+    IN p_prix INT,
+    IN p_stock INT)
+BEGIN
+    UPDATE produits SET stock = stock + p_stock WHERE nom = p_nom;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE change_stock_produit(
+    IN p_nom VARCHAR(255),
+    IN p_prix INT,
+    IN p_stock INT)
+BEGIN
+    UPDATE produits SET stock = p_stock WHERE nom = p_nom;
+END;
+//
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER checkinsert
+BEFORE INSERT ON produits
+FOR EACH ROW
+BEGIN
+    DECLARE temp_name VARCHAR(255);
+    DECLARE i INT DEFAULT 0;
+    SET temp_name = NEW.nom;
+    WHILE EXISTS (SELECT 1 FROM produits WHERE nom = temp_name) DO
+        SET i = i + 1;
+        SET temp_name = CONCAT(NEW.nom, '_', i);
+    END WHILE;
+    SET NEW.nom = temp_name;
+	END//
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER checkupdate
+BEFORE UPDATE ON produits
+FOR EACH ROW
+BEGIN
+    DECLARE temp_name VARCHAR(255);
+    DECLARE i INT DEFAULT 0;
+    SET temp_name = NEW.nom;
+    WHILE EXISTS (SELECT 1 FROM produits WHERE nom = temp_name) DO
+        SET i = i + 1;
+        SET temp_name = CONCAT(NEW.nom, '_', i);
+    END WHILE;
+    SET NEW.nom = temp_name;
+	END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS change_nom_produit;
+DELIMITER //
+
+CREATE PROCEDURE change_nom_produit(
+    IN oldname VARCHAR(255),
+    IN newname VARCHAR(255))
+BEGIN
+    -- Vérifier si le nouveau nom existe déjà
+    IF (SELECT COUNT(*) FROM produits WHERE nom = newname) = 0 THEN
+        UPDATE produits SET nom = newname WHERE nom = oldname;
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- app.post('/change_nom_produit/:oldname/:newname', (req, res) => {
+--   const { oldname, newname } = req.params; // Récupération des paramètres dans l'URL
+
+--   const sql = 'CALL change_nom_produit(?, ?)';
+
+--   db.query(sql, [oldname, newname], (err, result) => {
+--     if (err) {
+--       return res.status(500).json({ error: err.message });
+--     }
+--     res.json({ success: true, message: `Le produit "${oldname}" a été renommé en "${newname}".` });
+--   });
+-- });
